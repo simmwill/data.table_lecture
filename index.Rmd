@@ -1,0 +1,62 @@
+---
+output:
+  xaringan::moon_reader:
+    css: ["styles.css", "ninjutsu"]
+    seal: false
+    lib_dir: libs
+    nature:
+      countIncrementalSlides: false
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      ratio: '16:9'
+---
+
+```{r xaringan-extra-features, echo=FALSE}
+xaringanExtra::use_tile_view()
+xaringanExtra::use_search(show_icon = TRUE)
+xaringanExtra::use_clipboard()
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE
+)
+```
+
+class: center, middle, hide-count, title
+
+
+```{r, echo = FALSE, out.width="25%"}
+knitr::include_graphics(c("images/data.table_hex.png"))
+knitr::include_graphics(c("images/dtplyr_hex.png"))
+```
+<br>
+<br>
+
+.content-box-title[
+  ## .code[data.table] and .code[dtplyr]
+  ### R packages for high-efficiency data processing
+]
+
+.pull-right[
+  .rightalign[
+    <small>Will Simmons</small><br>
+    <small>Data Science I</small><br>
+    <small>December 8, 2021</small>
+  ]
+]
+
+???
+
+Include in lecture
+
+ - data.table
+    - translating using known dplyr language
+ - dtplyr
+    - auto-translation
+    - drawbacks: see here https://www.tidyverse.org/blog/2019/11/dtplyr-1-0-0/#performance
+ - random
+    - explain walrus operator and hex logo
+
+Resources:
+ - Talk by Matt Dowle https://www.youtube.com/watch?v=fZpA_cU0SPg
+ - Effeciency in data processing (slides): https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf
+    - slide 13: what's so special about data.table?

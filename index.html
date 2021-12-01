@@ -60,6 +60,39 @@ Resources:
  - Talk by Matt Dowle https://www.youtube.com/watch?v=fZpA_cU0SPg
  - Effeciency in data processing (slides): https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf
     - slide 13: what's so special about data.table?
+
+---
+
+## What is .code[data.table]?
+
+&lt;br&gt;
+&lt;ul&gt;
+
+### &lt;li&gt;High-performance version of base .code[R]’s .code[data.frame]&lt;/li&gt;
+
+### &lt;li&gt;Common comparison is to .code[dplyr] in purpose and scope&lt;/li&gt;
+
+### &lt;li&gt;Biggest advantage over .code[tidyverse] and base .code[R]: **speed**&lt;/li&gt;
+
+&lt;/ul&gt;&amp;nbsp;
+
+---
+
+## How much faster is .code[data.table]?
+
+&lt;br&gt;
+&lt;ul&gt;
+
+### &lt;li&gt;Often .red[3-30x] faster than .code[dplyr], depending on task
+
+### &lt;li&gt;50GB dataset (1B rows): .code[dplyr] not usable 😥
+
+### &lt;li&gt;See relative performance gain regardless, but not as apparent with small data&lt;/li&gt;
+
+&lt;/ul&gt;&amp;nbsp;
+
+.footnote[Source: *Database-like ops benchmark.* H2O.ai (https://h2oai.github.io/db-benchmark/).]
+  
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

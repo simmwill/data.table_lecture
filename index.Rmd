@@ -60,3 +60,36 @@ Resources:
  - Talk by Matt Dowle https://www.youtube.com/watch?v=fZpA_cU0SPg
  - Effeciency in data processing (slides): https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf
     - slide 13: what's so special about data.table?
+
+---
+
+## What is .code[data.table]?
+
+<br>
+<ul>
+
+### <li>High-performance version of base .code[R]’s .code[data.frame]</li>
+
+### <li>Common comparison is to .code[dplyr] in purpose and scope</li>
+
+### <li>Biggest advantage over .code[tidyverse] and base .code[R]: **speed**</li>
+
+</ul>&nbsp;
+
+---
+
+## How much faster is .code[data.table]?
+
+<br>
+<ul>
+
+### <li>Often .red[3-30x] faster than .code[dplyr], depending on task
+
+### <li>50GB dataset (1B rows): .code[dplyr] not usable `r emo::ji("phew")`
+
+### <li>See relative performance gain regardless, but not as apparent with small data</li>
+
+</ul>&nbsp;
+
+.footnote[Source: *Database-like ops benchmark.* H2O.ai (https://h2oai.github.io/db-benchmark/).]
+  

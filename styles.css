@@ -118,6 +118,13 @@ h1 {
   font-size: var(--code-font-size);
   line-height: 1.15rem;
 }
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  color: #333;
+  background: #FAF3F0;
+}
 .remark-inline-code {
   font-size: var(--code-inline-font-size);
   color: #000000;
@@ -383,3 +390,11 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
   background: none;
 }
 .content-box-ochre
+
+.highlight-last-item > ul > li, .highlight-last-item > ol > li {
+  opacity: 0.5;
+}
+.highlight-last-item > ul > li:last-of-type,
+.highlight-last-item > ol > li:last-of-type {
+  opacity: 1;
+}

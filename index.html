@@ -23,7 +23,6 @@
 
 
 
-
 class: center, middle, hide-count, title
 
 
@@ -49,10 +48,29 @@ class: center, middle, hide-count, title
 Include in lecture
 
  - data.table
-    - translating using known dplyr language
+    - speed
+      - source code entirely in C, which is faster than, e.g., base `R`
+      - modify in place, vs. copy on modify (http://adv-r.had.co.nz/memory.html#modification)
+      - query optimization
+    - translating using known dplyr language 
+      - resources: 
+        - https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
+      - overall structure
+        - SQL analogy: FROM[WHERE, SELECT, GROUP BY]
+          DT[i, j, by]
+          R:                 i                 j        by
+          SQL:  where | order by   select | update  group by
+      - subset
+        - filter by condition 
+        - filter by index
+        - sort rows using order()
+      - emphasize modify in place that occurs with `set*` family and `:=`
  - dtplyr
     - auto-translation
     - drawbacks: see here https://www.tidyverse.org/blog/2019/11/dtplyr-1-0-0/#performance
+    - also this post https://stackoverflow.com/questions/59054589/what-cant-i-do-with-dtplyr-that-i-can-in-data-table
+      - translation may not be perfect, which may lead to inefficiencies
+      - copy-on-modify vs. modify-in-place in dtplyr's mutate()
  - random
     - explain walrus operator and hex logo
 
@@ -63,14 +81,26 @@ Resources:
 
 ---
 
+class: center, middle
+
+### `data.table` &lt;br&gt;&lt;br&gt; introduction
+
+---
+
 ## What is .code[data.table]?
 
 &lt;br&gt;
 &lt;ul&gt;
 
+--
+
 ### &lt;li&gt;High-performance version of base .code[R]’s .code[data.frame]&lt;/li&gt;
 
-### &lt;li&gt;Common comparison is to .code[dplyr] in purpose and scope&lt;/li&gt;
+--
+
+### &lt;li&gt;Similar to .code[dplyr] in purpose and scope&lt;/li&gt;
+
+--
 
 ### &lt;li&gt;Biggest advantage over .code[tidyverse] and base .code[R]: **speed**&lt;/li&gt;
 
@@ -83,16 +113,117 @@ Resources:
 &lt;br&gt;
 &lt;ul&gt;
 
-### &lt;li&gt;Often .red[3-30x] faster than .code[dplyr], depending on task
+--
 
-### &lt;li&gt;50GB dataset (1B rows): .code[dplyr] not usable 😥
+### &lt;li&gt;Almost always faster than .code[dplyr], depending on task
 
-### &lt;li&gt;See relative performance gain regardless, but not as apparent with small data&lt;/li&gt;
+--
+
+### &lt;li&gt;Advantage more apparent with larger data&lt;/li&gt;
+
+--
+
+### &lt;li&gt;With enough rows/groups, .code[dplyr] not even usable 😥
 
 &lt;/ul&gt;&amp;nbsp;
 
 .footnote[Source: *Database-like ops benchmark.* H2O.ai (https://h2oai.github.io/db-benchmark/).]
   
+???
+
+Performing grouped operations or joins on large data, data.table can outperform dplyr by a factor of 30 in terms of speed
+
+---
+
+## Basic `data.table` syntax
+
+.center[
+
+&lt;br&gt;
+# .code[.golden[DT][.green[i], .blue[j], .cardinal[by]]]
+&lt;br&gt;
+
+Take `data.table` **.code[.golden[DT]]**,&lt;br&gt;
+subset rows using **.code[.green[i]]**&lt;br&gt;
+and manipulate columns with **.code[.blue[j]]**,&lt;br&gt;
+grouped according to **.code[.cardinal[by]]**.
+
+]
+
+.footnote[Source: *Data Transformation with data.table :: CHEAT SHEET.* Erik Petrovski. [Link](https://rdatatable.gitlab.io/data.table/#cheatsheets).]
+
+???
+
+If we want to think about it in terms of dplyr verbs:
+Take data.table DT,
+**filter** and **arrange** using i,
+and **select**, **mutate**, or **summarize** columns with j,
+**grouped by** by.
+
+We'll get briefly into more complex things we've learned with dplyr, too, like piping multiple commands and joining data.
+
+---
+
+class: center, middle
+
+### `data.table` &lt;br&gt;&lt;br&gt; demonstration
+
+---
+
+
+
+## Create a `data.table`
+
+### From scratch
+
+Similar to `data.frame` or `tibble`, we can manually build a `data.table`.
+
+
+```r
+# Create a data.table from scratch
+
+test &lt;- data.table(
+  a = 1:3,
+  b = letters[1:3],  # letters and LETTERS are predefined vectors in R
+  c = LETTERS[1:3]
+)
+
+test
+```
+
+```
+##    a b c
+## 1: 1 a A
+## 2: 2 b B
+## 3: 3 c C
+```
+
+---
+
+## Create a `data.table`
+
+### From an existing data object
+
+We can also coerce an existing data object into a `data.table` using the `setDT()` function. We'll use the `mtcars` dataset included with `R` as an example.
+
+`mtcars` is loaded as a `data.frame` by default; let's change it so we can manipulate it using `data.table`.
+
+
+```r
+# Make an existing object into a data.table
+
+library(data.table)
+
+mtcars &lt;- setDT(mtcars)  # use setDT() to coerce to data.table
+class(mtcars)
+```
+
+```
+## [1] "data.table" "data.frame"
+```
+
+Note: `data.table` operations won't work on non-`data.table` objects.
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -1,0 +1,95 @@
+---
+title: "A quick overview of `data.table`"
+author: "Will Simmons"
+date: "2021-12-08"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+<br>
+
+## Resources I've found helpful
+
+* [Introduction to `data.table`](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
+* [A gentle introduction to `data.table`](https://atrebas.github.io/post/2020-06-17-datatable-introduction/)
+* [Elio Campitelli's *Why I Love `data.table`](https://eliocamp.github.io/codigo-r/en/2019/07/why-i-love-data-table/)
+
+## `data.table` syntax
+
+`data.table` syntax can be considered more *compact* than other `R` "flavors," including `dplyr`. Using `data.table` boils down to three elements: `i`, `j`, and `by`.
+
+`r knitr::include_graphics(c("images/dt_syntax.png"))`
+
+## Walkthrough
+
+```{r, setup}
+library(palmerpenguins)
+penguins <- penguins
+library(data.table)
+```
+
+###  1. Create a `data.table`
+
+<br>
+
+#### a. From scratch
+
+Similar to `data.frame` or `tibble`, we can manually define a `data.table`.
+
+```{r}
+
+# Create a data.table from scratch
+
+test <- data.table(
+  a = 1:5,
+  b = letters[1:5],  # letters and LETTERS are predefined vectors in R
+  c = LETTERS[1:5]
+)
+
+test
+
+```
+
+<br>
+
+#### b. From an existing data object
+
+We can also coerce an existing data object into a `data.table` using the `setDT()` function. We'll use the `penguins` dataset from the R package `palmerpenguins` as an example.
+
+```{r}
+
+# Make an existing object into a data.table
+
+class(penguins)              # earlier, was loaded as tibble by default
+penguins <- setDT(penguins)  # use setDT() to coerce to data.table
+class(penguins)
+
+```
+
+
+### 2. Manipulate a `data.table`
+
+<br>
+
+#### a. Subset rows
+
+We can subset rows by logical condition (e.g., in reference to the columns in the dataset)...
+
+```{r}
+
+penguins[bill_length_mm >= 58]  # by condition - no need to use $ to refer to variables
+
+```
+
+or by row index.
+
+```{r}
+
+penguins[1:3]
+
+```
+
+#### b. Reorder rows
+

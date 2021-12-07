@@ -182,14 +182,14 @@ class: center, middle
 
 ### Create a `data.table` .golden[from scratch] 
 
+--
+
   - Similar to `data.frame` or `tibble`, we can manually build a `data.table`
   
 --
 
 
 ```r
-# Create a data.table from scratch
-
 test &lt;- data.table(
   a = 1:3,
   b = letters[1:3],  # letters and LETTERS are predefined vectors in R
@@ -222,7 +222,6 @@ test
 
 
 ```r
-# Make an existing object into a data.table
 mtcars &lt;- mtcars         # if loaded before data.table, loaded as data.frame
 library(data.table)
 
@@ -236,6 +235,7 @@ class(mtcars)
 
 --
 
+&lt;br&gt;
 **Note:** `data.table` operations won't work on non-`data.table` objects.
 
 ---
@@ -246,7 +246,7 @@ class(mtcars)
 
 --
 
-* If `nrow` &gt; 100, prints `head(5)` and `tail(5)`
+* If `nrow` &gt; 100, calling a .code[data.table] prints `head(5)` and `tail(5)`
 
 --
 
@@ -290,13 +290,13 @@ Since mtcars only contains 32 rows, data.table would print the whole thing
 
 ```r
 # read
-mydata &lt;- fread(here("data/mydata.csv"))  # much faster than read_csv(), etc.
+mydata &lt;- fread(here("data/mydata.csv"))         # much faster than read_csv(), etc.
 
 # wrangle
 mydata_cleaned &lt;- ...
 
 # write
-fwrite(mydata, here("data/mydata_cleaned.csv"))
+fwrite(mydata, here("data/mydata_cleaned.csv"))  # create an updated CSV
 ```
 
 ---
@@ -334,6 +334,10 @@ class: center, middle
 
 ]
 
+???
+
+One quick aside here -- you'll see that all data.table code is contained within brackets; this allows data.table to know exactly what data is required for each computation, which usually makes it much faster than its dplyr equivalent
+
 ---
 
 .syntax-header[.code[.golden[DT][.green[i], .fade[.blue[j], .cardinal[by]]]]]
@@ -343,7 +347,7 @@ class: center, middle
 
 --
 
-* By logical condition
+By logical condition
 
 --
 
@@ -360,7 +364,7 @@ mtcars[mpg &gt;= 31]  # as with dplyr, no need to use $ to refer to variables
 
 --
 
-* By row index
+By row index
 
 --
 
@@ -434,7 +438,7 @@ head(ordered_desc)
 
 ---
 
-.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+.syntax-header[.code[.golden[DT][.fade[.green[i]], .blue[j].fade[,.cardinal[by]]]]]
 &lt;br&gt;
 
 ## Select columns in .code[.blue[j]]
@@ -461,7 +465,7 @@ head(selection)
 
 ---
 
-.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+.syntax-header[.code[.golden[DT][.fade[.green[i]], .blue[j].fade[,.cardinal[by]]]]]
 &lt;br&gt;
 
 ## Rename columns in .code[.blue[j]]
@@ -496,7 +500,7 @@ class: center, middle
 
 ---
 
-.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+.syntax-header[.code[.golden[DT][.fade[.green[i]], .blue[j].fade[,.cardinal[by]]]]]
 &lt;br&gt;
 
 ## .code[.blue[j]] is powerful!
@@ -515,13 +519,17 @@ class: center, middle
 
 ### &lt;li&gt;When .code[.blue[j]] contains an expression, its result will be evaluated
 
+???
+
+When j returns a list, each list element will be returned as a column - allows operations similar to dplyr across, but much more flexible
+
 ---
 
 ## Computation within .code[.blue[j]]: operations on columns
 
 --
 
-* What is the mean weight of the cars in the `mtcars` dataset?
+What is the mean weight of the cars in the `mtcars` dataset?
 
 --
 
@@ -535,7 +543,7 @@ mtcars[, mean(wt)]
 ```
 --
 
-* How many cars in the `mtcars` dataset have a 4-cylinder engine?
+How many cars in the `mtcars` dataset have a 4-cylinder engine?
 
 --
 
@@ -549,7 +557,7 @@ mtcars[, sum(cyl == 4)]
 ```
 --
 
-### Remember: .code[.blue[j]] doesn't accept just column names, but also expressions!
+### Remember: .code[.blue[j]] can accept column names **and** expressions!
 
 ---
 
@@ -560,10 +568,12 @@ mtcars[, sum(cyl == 4)]
 
 --
 
-* Compare mean fuel efficiency (in miles per gallon) of cars with 4 cylinders versus those with more than 4 cylinders.
+Compare mean fuel efficiency (in miles per gallon) of cars with 4 cylinders versus those with more than 4 cylinders.
 
 --
 
+First, get the mean .code[mpg] for cars with 4 cylinders:
+--
 
 ```r
 mtcars[cyl == 4, mean(mpg)]
@@ -572,6 +582,9 @@ mtcars[cyl == 4, mean(mpg)]
 ```
 ## [1] 26.66364
 ```
+--
+Then the mean .code[mpg] for cars with more than 4:
+--
 
 ```r
 mtcars[cyl &gt; 4, mean(mpg)]
@@ -580,7 +593,6 @@ mtcars[cyl &gt; 4, mean(mpg)]
 ```
 ## [1] 16.64762
 ```
-
 --
 
 ### Next: .code[.green[i]] and .code[.blue[j]] become even more flexible with .code[.cardinal[by]]
@@ -599,10 +611,9 @@ grouped .code[mutate] and .code[summarize]
 
 ## .code[.cardinal[by]]: group by 1+ variables
 
-&lt;br&gt;
 --
 
-* Example: What are the median quarter-mile race times for 4- and 5-gear cars in `mtcars`?
+What are the median quarter-mile race times for 4- and 5-gear cars in `mtcars`?
 
 --
 
@@ -619,11 +630,11 @@ mtcars[gear &gt; 3, .(median_qtr_mile = median(qsec)), gear]
 
 --
 
-* Here, we:
+Here, we:
 
   * Subset to cars with .code[gear &gt; 3] in .code[.green[i]]
-  * Created .code[median_qtr_mile] using an expression in .code[.blue[j]]
-  * Grouped by .code[gear] value in .code[.cardinal[by]]
+  * Calculated .code[median_qtr_mile] using an expression in .code[.blue[j]]
+  * Grouped by .code[gear] in .code[.cardinal[by]] 
 
 ---
 
@@ -643,7 +654,7 @@ mtcars[gear &gt; 3, .(median_qtr_mile = median(qsec)), gear]
 
 ### &lt;li&gt;Example:&lt;/li&gt;
 
-How many cars are automatic, and how many are manual? 
+How many cars are automatic, and how many are manual, in the .code[mtcars] dataset? 
 
 --
 
@@ -662,25 +673,25 @@ mtcars[, .N, by = am]
 
 ## More examples with .code[.cardinal[by]]
 
-* What is the fastest quarter-mile time by number of cylinders?
+What's the fastest quarter-mile time by number of cylinders?
 
 
 ```r
-mtcars[, .(min_time = min(qsec)), keyby = cyl]  # keyby (instead of by) sorts results
+mtcars[, .(fastest_time = min(qsec)), keyby = cyl]  # keyby (instead of by) sorts results
 ```
 
 ```
-##    cyl min_time
-## 1:   4     16.7
-## 2:   6     15.5
-## 3:   8     14.5
+##    cyl fastest_time
+## 1:   4         16.7
+## 2:   6         15.5
+## 3:   8         14.5
 ```
 
-* What's the highest horsepower in automatic versus manual cars?
+What's the highest horsepower in automatic versus manual cars?
 
 
 ```r
-mtcars[, (max_hp = max(hp)), by = am]
+mtcars[, (max_hp = max(hp)), am]
 ```
 
 ```
@@ -711,7 +722,9 @@ mtcars[, .(mpg, weight_cat = fifelse(wt &gt;= 2, "heavy", "light"))  # fifelse =
 ## 2:      light 30.50000
 ```
 
-* Here, we:
+--
+
+Here, we:
 
   * Selected .code[mpg] and the newly-created .code[weight_cat] in our first .code[.blue[j]] statement
   * Calculated .code[mean_mpg], grouped by .code[weight_cat], using our second .code[.blue[j]] statement and .cardinal[by]
@@ -722,7 +735,7 @@ mtcars[, .(mpg, weight_cat = fifelse(wt &gt;= 2, "heavy", "light"))  # fifelse =
 &lt;br&gt;
 --
 
-* Complex operations can have many chains - organize vertically
+Complex operations can have many chains - organize vertically
 
 --
 

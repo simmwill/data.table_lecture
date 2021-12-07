@@ -143,6 +143,12 @@ Performing grouped operations or joins on large data, data.table can outperform 
 # .code[.golden[DT][.green[i], .blue[j], .cardinal[by]]]
 &lt;br&gt;
 
+]
+
+--
+
+.center[
+
 Take `data.table` **.code[.golden[DT]]**,&lt;br&gt;
 subset rows using **.code[.green[i]]**&lt;br&gt;
 and manipulate columns with **.code[.blue[j]]**,&lt;br&gt;
@@ -166,17 +172,19 @@ We'll get briefly into more complex things we've learned with dplyr, too, like p
 
 class: center, middle
 
-### `data.table` &lt;br&gt;&lt;br&gt; demonstration
+### `data.table` &lt;br&gt;&lt;br&gt; basics
 
 ---
 
 
 
-## Create a `data.table`
+## Basics with `data.table`
 
-### From scratch
+### Create a `data.table` .golden[from scratch] 
 
-Similar to `data.frame` or `tibble`, we can manually build a `data.table`.
+  - Similar to `data.frame` or `tibble`, we can manually build a `data.table`
+  
+--
 
 
 ```r
@@ -200,18 +208,22 @@ test
 
 ---
 
-## Create a `data.table`
+## Basics with `data.table`
 
-### From an existing data object
+### Create a `data.table` .golden[from an existing object]
 
-We can also coerce an existing data object into a `data.table` using the `setDT()` function. We'll use the `mtcars` dataset included with `R` as an example.
+--
 
-`mtcars` is loaded as a `data.frame` by default; let's change it so we can manipulate it using `data.table`.
+  * We can also coerce an existing object into a `data.table` using `setDT()`  
+
+  * `mtcars` is loaded as a `data.frame` by default; let's make it usable with `data.table`
+  
+--
 
 
 ```r
 # Make an existing object into a data.table
-
+mtcars &lt;- mtcars         # if loaded before data.table, loaded as data.frame
 library(data.table)
 
 mtcars &lt;- setDT(mtcars)  # use setDT() to coerce to data.table
@@ -222,8 +234,621 @@ class(mtcars)
 ## [1] "data.table" "data.frame"
 ```
 
-Note: `data.table` operations won't work on non-`data.table` objects.
+--
 
+**Note:** `data.table` operations won't work on non-`data.table` objects.
+
+---
+
+## Basics with `data.table` data
+
+### .golden[Print data]
+
+--
+
+* If `nrow` &gt; 100, prints `head(5)` and `tail(5)`
+
+--
+
+
+```r
+as.data.table(quakes)  # can also coerce to DT with as.data.table()
+```
+
+```
+##          lat   long depth mag stations
+##    1: -20.42 181.62   562 4.8       41
+##    2: -20.62 181.03   650 4.2       15
+##    3: -26.00 184.10    42 5.4       43
+##    4: -17.97 181.66   626 4.1       19
+##    5: -20.42 181.96   649 4.0       11
+##   ---                                 
+##  996: -25.93 179.54   470 4.4       22
+##  997: -12.28 167.06   248 4.7       35
+##  998: -20.13 184.20   244 4.5       34
+##  999: -17.40 187.80    40 4.5       14
+## 1000: -21.59 170.56   165 6.0      119
+```
+
+???
+Since mtcars only contains 32 rows, data.table would print the whole thing
+
+---
+
+## Basics with `data.table` data
+
+### .golden[Read and write data]
+
+--
+
+  * Fast delimited file reader: **.code[fread()]**
+  
+  * Fast file writer: **.code[fwrite()]**
+
+--
+
+
+```r
+# read
+mydata &lt;- fread(here("data/mydata.csv"))  # much faster than read_csv(), etc.
+
+# wrangle
+mydata_cleaned &lt;- ...
+
+# write
+fwrite(mydata, here("data/mydata_cleaned.csv"))
+```
+
+---
+
+class: center, middle
+
+### `data.table` &lt;br&gt;&lt;br&gt; simple data operations
+
+.code[filter, arrange, select, rename]
+
+---
+
+## Reminder: .code[data.table] syntax
+
+.center[
+
+# .code[.golden[DT][.green[i], .blue[j], .cardinal[by]]]
+&lt;br&gt;
+
+]
+
+--
+
+.center[
+
+### approximate .code[dplyr] translation:
+.code[.golden[data] %&gt;%] &lt;br&gt;
+.code[.blue[select] %&gt;% ]&lt;br&gt;
+.code[.green[filter | arrange] %&gt;% ]&lt;br&gt;
+.code[.cardinal[group_by] %&gt;% ]&lt;br&gt;
+.code[.blue[mutate | summarize]]
+
+]
+&lt;br&gt;
+
+]
+
+---
+
+.syntax-header[.code[.golden[DT][.green[i], .fade[.blue[j], .cardinal[by]]]]]
+&lt;br&gt;
+
+## Subset rows in .code[.green[i]] 
+
+--
+
+* By logical condition
+
+--
+
+
+```r
+mtcars[mpg &gt;= 31]  # as with dplyr, no need to use $ to refer to variables
+```
+
+```
+##     mpg cyl disp hp drat    wt  qsec vs am gear carb
+## 1: 32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## 2: 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+```
+
+--
+
+* By row index
+
+--
+
+
+```r
+mtcars[1:3]
+```
+
+```
+##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+```
+
+---
+
+.syntax-header[.code[.golden[DT][.green[i], .fade[.blue[j], .cardinal[by]]]]]
+&lt;br&gt;
+
+## Reorder rows in .code[.green[i]] using .code[order()]
+
+--
+
+Ascending order (default)
+
+--
+
+
+```r
+ordered &lt;- mtcars[order(hp)]
+head(ordered)
+```
+
+```
+##     mpg cyl  disp hp drat    wt  qsec vs am gear carb
+## 1: 30.4   4  75.7 52 4.93 1.615 18.52  1  1    4    2
+## 2: 24.4   4 146.7 62 3.69 3.190 20.00  1  0    4    2
+## 3: 33.9   4  71.1 65 4.22 1.835 19.90  1  1    4    1
+## 4: 32.4   4  78.7 66 4.08 2.200 19.47  1  1    4    1
+## 5: 27.3   4  79.0 66 4.08 1.935 18.90  1  1    4    1
+## 6: 26.0   4 120.3 91 4.43 2.140 16.70  0  1    5    2
+```
+
+---
+
+.syntax-header[.code[.golden[DT][.green[i], .fade[.blue[j], .cardinal[by]]]]]
+&lt;br&gt;
+
+## Reorder rows in .code[.green[i]] using .code[order()]
+
+Descending order using hyphen (`-`)
+
+--
+
+
+```r
+ordered_desc &lt;- mtcars[order(-hp)]
+head(ordered_desc)
+```
+
+```
+##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 15.0   8  301 335 3.54 3.570 14.60  0  1    5    8
+## 2: 15.8   8  351 264 4.22 3.170 14.50  0  1    5    4
+## 3: 14.3   8  360 245 3.21 3.570 15.84  0  0    3    4
+## 4: 13.3   8  350 245 3.73 3.840 15.41  0  0    3    4
+## 5: 14.7   8  440 230 3.23 5.345 17.42  0  0    3    4
+## 6: 10.4   8  460 215 3.00 5.424 17.82  0  0    3    4
+```
+
+---
+
+.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+&lt;br&gt;
+
+## Select columns in .code[.blue[j]]
+
+* Wrap desired columns in .code[list()] or .code[.()] (an alias for .code[list()]); the latter is more common
+
+--
+
+
+```r
+selection &lt;- mtcars[, .(mpg, hp)]  # note the comma before j
+head(selection)
+```
+
+```
+##     mpg  hp
+## 1: 21.0 110
+## 2: 21.0 110
+## 3: 22.8  93
+## 4: 21.4 110
+## 5: 18.7 175
+## 6: 18.1 105
+```
+
+---
+
+.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+&lt;br&gt;
+
+## Rename columns in .code[.blue[j]]
+
+* As in .code[dplyr], can select and rename at the same time
+
+--
+
+
+```r
+renamed &lt;- mtcars[, .(miles_per_gal = mpg, horsepower = hp)]
+head(renamed)
+```
+
+```
+##    miles_per_gal horsepower
+## 1:          21.0        110
+## 2:          21.0        110
+## 3:          22.8         93
+## 4:          21.4        110
+## 5:          18.7        175
+## 6:          18.1        105
+```
+
+---
+
+class: center, middle
+
+### `data.table` &lt;br&gt;&lt;br&gt; simple data manipulation
+
+.code[mutate, summarize] without groups
+
+---
+
+.syntax-header[.code[.golden[DT][.fade[.green[i],] .blue[j], .fade[.cardinal[by]]]]]
+&lt;br&gt;
+
+## .code[.blue[j]] is powerful!
+
+&lt;br&gt;
+&lt;ul&gt;
+--
+
+### &lt;li&gt;Contains capabilities of .code[dplyr]'s .code[select], .code[mutate], .code[summarize], and more&lt;/li&gt;
+
+--
+
+### &lt;li&gt;When .code[.blue[j]] returns a list, each list-element will become a column in the resulting .code[data.table]&lt;/li&gt;
+
+--
+
+### &lt;li&gt;When .code[.blue[j]] contains an expression, its result will be evaluated
+
+---
+
+## Computation within .code[.blue[j]]: operations on columns
+
+--
+
+* What is the mean weight of the cars in the `mtcars` dataset?
+
+--
+
+
+```r
+mtcars[, mean(wt)]
+```
+
+```
+## [1] 3.21725
+```
+--
+
+* How many cars in the `mtcars` dataset have a 4-cylinder engine?
+
+--
+
+
+```r
+mtcars[, sum(cyl == 4)]
+```
+
+```
+## [1] 11
+```
+--
+
+### Remember: .code[.blue[j]] doesn't accept just column names, but also expressions!
+
+---
+
+.syntax-header[.code[.golden[DT][.green[i], .blue[j].fade[, .cardinal[by]]]]]
+&lt;br&gt;
+
+## Combining .code[.green[i]] and .code[.blue[j]]
+
+--
+
+* Compare mean fuel efficiency (in miles per gallon) of cars with 4 cylinders versus those with more than 4 cylinders.
+
+--
+
+
+```r
+mtcars[cyl == 4, mean(mpg)]
+```
+
+```
+## [1] 26.66364
+```
+
+```r
+mtcars[cyl &gt; 4, mean(mpg)]
+```
+
+```
+## [1] 16.64762
+```
+
+--
+
+### Next: .code[.green[i]] and .code[.blue[j]] become even more flexible with .code[.cardinal[by]]
+
+---
+
+class: center, middle
+
+### `data.table` &lt;br&gt;&lt;br&gt; complex data manipulation
+grouped .code[mutate] and .code[summarize]
+
+---
+
+.syntax-header[.code[.golden[DT][.green[i], .blue[j], .cardinal[by]]]]
+&lt;br&gt;
+
+## .code[.cardinal[by]]: group by 1+ variables
+
+&lt;br&gt;
+--
+
+* Example: What are the median quarter-mile race times for 4- and 5-gear cars in `mtcars`?
+
+--
+
+
+```r
+mtcars[gear &gt; 3, .(median_qtr_mile = median(qsec)), gear]
+```
+
+```
+##    gear median_qtr_mile
+## 1:    4          18.755
+## 2:    5          15.500
+```
+
+--
+
+* Here, we:
+
+  * Subset to cars with .code[gear &gt; 3] in .code[.green[i]]
+  * Created .code[median_qtr_mile] using an expression in .code[.blue[j]]
+  * Grouped by .code[gear] value in .code[.cardinal[by]]
+
+---
+
+## Introducing .code[.N]
+
+&lt;ul&gt;
+
+--
+
+### &lt;li&gt;Special .code[data.table] variable .code[.N]: number of observations in the current group&lt;/li&gt;
+
+--
+
+### &lt;li&gt;Similar use to .code[dplyr::count()] or .code[base::nrow()]&lt;/li&gt;
+
+--
+
+### &lt;li&gt;Example:&lt;/li&gt;
+
+How many cars are automatic, and how many are manual? 
+
+--
+
+
+```r
+mtcars[, .N, by = am]
+```
+
+```
+##    am  N
+## 1:  1 13
+## 2:  0 19
+```
+
+---
+
+## More examples with .code[.cardinal[by]]
+
+* What is the fastest quarter-mile time by number of cylinders?
+
+
+```r
+mtcars[, .(min_time = min(qsec)), keyby = cyl]  # keyby (instead of by) sorts results
+```
+
+```
+##    cyl min_time
+## 1:   4     16.7
+## 2:   6     15.5
+## 3:   8     14.5
+```
+
+* What's the highest horsepower in automatic versus manual cars?
+
+
+```r
+mtcars[, (max_hp = max(hp)), by = am]
+```
+
+```
+##    am  V1
+## 1:  1 335
+## 2:  0 245
+```
+
+---
+
+## Chaining .code[data.table] expressions (like .code[%&gt;%])
+&lt;br&gt;
+--
+
+What is the mean fuel efficiency (in miles per gallon) of heavy (&gt;= 2000 lbs) versus light (&lt; 2000 lbs) cars?
+
+--
+
+
+```r
+mtcars[, .(mpg, weight_cat = fifelse(wt &gt;= 2, "heavy", "light"))  # fifelse = "fast if-else" 
+       ][, .(mean_mpg = mean(mpg)), by = weight_cat]
+```
+
+```
+##    weight_cat mean_mpg
+## 1:      heavy 18.60357
+## 2:      light 30.50000
+```
+
+* Here, we:
+
+  * Selected .code[mpg] and the newly-created .code[weight_cat] in our first .code[.blue[j]] statement
+  * Calculated .code[mean_mpg], grouped by .code[weight_cat], using our second .code[.blue[j]] statement and .cardinal[by]
+  
+---
+
+## Chaining .code[data.table] expressions (like .code[%&gt;%])
+&lt;br&gt;
+--
+
+* Complex operations can have many chains - organize vertically
+
+--
+
+
+```r
+DT[ ...
+   ][ ...
+     ][ ...
+       ][ ...
+         ][ ...
+           ][ ... ]
+```
+
+---
+
+class: center, middle
+
+### `dtplyr` &lt;br&gt;&lt;br&gt; quick overview
+
+---
+
+## What is .code[dtplyr]?
+&lt;br&gt;
+&lt;ul&gt;
+
+--
+
+### &lt;li&gt;.code[data.table] backend (fast) + .code[dplyr] code (familiar)
+
+--
+
+### &lt;li&gt;Translates .code[dplyr] code to .code[data.table] code for us!
+
+--
+
+### &lt;li&gt;So...why learn .code[data.table] in the first place?
+
+???
+
+Why learn data.table in the first place?
+
+ - dplyr can't do everything that data.table can, so there will be missing features
+ - still some sacrifice in speed for certain features of dplyr, mainly dplyr's copy-on-modify behavior
+ 
+---
+
+## Using .code[dtplyr]
+
+--
+
+* We'll need to load .code[dplyr], .code[dtplyr], and .code[data.table]
+
+--
+
+
+```r
+library(dplyr)
+library(dtplyr)
+library(data.table)
+```
+
+---
+
+## Using .code[dtplyr]
+
+--
+
+* Then, we'll write our .code[dplyr] code, adding two elements:
+
+--
+
+  * Apply .code[lazy_dt()] to input data
+--
+
+  * Use .code[collect()], .code[as_tibble()], or .code[as.data.frame()] to collect results
+
+--
+  
+
+```r
+palmerpenguins::penguins %&gt;%   # penguins dataset is tibble by default
+  lazy_dt() %&gt;% 
+  group_by(species) %&gt;% 
+  summarize(mean_bill_length = mean(bill_length_mm, na.rm = TRUE)) %&gt;% 
+  collect()
+```
+
+```
+## # A tibble: 3 x 2
+##   species   mean_bill_length
+##   &lt;fct&gt;                &lt;dbl&gt;
+## 1 Adelie                38.8
+## 2 Chinstrap             48.8
+## 3 Gentoo                47.5
+```
+
+---
+
+## .code[dtyplr]: usefulness
+
+&lt;br&gt;
+--
+
+* If you **don't** want to learn .code[data.table] but would like performance gain with .code[dplyr]
+
+--
+
+* If you **do** want to learn .code[data.table], helpful to see .code[dtyplr]'s translations of your .code[dplyr] code
+
+--
+
+* Drawback: potentially limited to simpler analytic procedures
+
+---
+
+## Things I didn't cover here
+
+* Advanced .code[data.table] [reference semantics](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reference-semantics.html) using `:=` 
+* .code[.SD] and .code[.SDcols]: similar use-case as .code[across]
+* Things .data[data.table] can do that .code[dplyr] and .code[dtplyr] [may not be able to](https://stackoverflow.com/a/59081276)
+
+---
+
+class: center, middle
+
+## questions?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

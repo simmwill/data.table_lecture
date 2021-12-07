@@ -120,8 +120,7 @@ h1 {
 }
 .remark-code {
   display: block;
-  overflow-x: auto;
-  padding: .5em;
+  width: 100%;
   color: #333;
   background: #FAF3F0;
 }
@@ -145,6 +144,13 @@ a, a > code {
   left: 20px;
   padding-right: 4em;
   font-size: 0.4em;
+}
+.syntax-header {
+  position: absolute;
+  top: 9px;
+  right: 5px;
+  padding-right: 0em;
+  font-size: 2em;
 }
 .remark-code-line-highlighted {
   background-color: var(--code-highlight-color);
@@ -397,4 +403,7 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 .highlight-last-item > ul > li:last-of-type,
 .highlight-last-item > ol > li:last-of-type {
   opacity: 1;
+}
+.fade {
+  opacity: 0.2;
 }

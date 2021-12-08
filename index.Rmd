@@ -438,7 +438,7 @@ class: center, middle
 
 --
 
-### <li>When .code[.blue[j]] contains an expression, its result will be evaluated
+### <li>When .code[.blue[j]] contains an expression, it will be evaluated
 
 ???
 
@@ -560,13 +560,21 @@ mtcars[, .N, by = am]
 
 ## More examples with .code[.cardinal[by]]
 
+--
+
 What's the fastest quarter-mile time by number of cylinders?
+
+--
 
 ```{r}
 mtcars[, .(fastest_time = min(qsec)), keyby = cyl]  # keyby (instead of by) sorts results
 ```
 
+--
+
 What's the highest horsepower in automatic versus manual cars?
+
+--
 
 ```{r}
 mtcars[, (max_hp = max(hp)), am]
@@ -706,8 +714,21 @@ palmerpenguins::penguins %>%   # penguins dataset is tibble by default
 
 ## Things I didn't cover here
 
-* Advanced .code[data.table] [reference semantics](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reference-semantics.html) using `:=` 
-* .code[.SD] and .code[.SDcols]: similar use-case as .code[across]
+<br>
+--
+
+* The secret ingredient of .code[data.table]: modification in place
+
+--
+
+* Advanced .code[data.table] [reference semantics](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reference-semantics.html) using .code[:=] and .code[set*] functions
+
+--
+
+* .code[.SD] and .code[.SDcols]: similar use-cases as .code[dplyr::across()]
+
+--
+
 * Things .data[data.table] can do that .code[dplyr] and .code[dtplyr] [may not be able to](https://stackoverflow.com/a/59081276)
 
 ---

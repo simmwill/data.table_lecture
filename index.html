@@ -43,42 +43,6 @@ class: center, middle, hide-count, title
   ]
 ]
 
-???
-
-Include in lecture
-
- - data.table
-    - speed
-      - source code entirely in C, which is faster than, e.g., base `R`
-      - modify in place, vs. copy on modify (http://adv-r.had.co.nz/memory.html#modification)
-      - query optimization
-    - translating using known dplyr language 
-      - resources: 
-        - https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
-      - overall structure
-        - SQL analogy: FROM[WHERE, SELECT, GROUP BY]
-          DT[i, j, by]
-          R:                 i                 j        by
-          SQL:  where | order by   select | update  group by
-      - subset
-        - filter by condition 
-        - filter by index
-        - sort rows using order()
-      - emphasize modify in place that occurs with `set*` family and `:=`
- - dtplyr
-    - auto-translation
-    - drawbacks: see here https://www.tidyverse.org/blog/2019/11/dtplyr-1-0-0/#performance
-    - also this post https://stackoverflow.com/questions/59054589/what-cant-i-do-with-dtplyr-that-i-can-in-data-table
-      - translation may not be perfect, which may lead to inefficiencies
-      - copy-on-modify vs. modify-in-place in dtplyr's mutate()
- - random
-    - explain walrus operator and hex logo
-
-Resources:
- - Talk by Matt Dowle https://www.youtube.com/watch?v=fZpA_cU0SPg
- - Effeciency in data processing (slides): https://jangorecki.gitlab.io/r-talks/2019-12-26_Mumbai_Efficiency-in-data-processing/Efficiency-in-data-processing.pdf
-    - slide 13: what's so special about data.table?
-
 ---
 
 class: center, middle
